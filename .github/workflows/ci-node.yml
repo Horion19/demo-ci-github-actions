@@ -1,0 +1,46 @@
+# Crea .github/workflows/ci-node.yml
+name: CI Node.js
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # 1. Descargar el código del repo
+    - name: Checkout del código
+      uses: actions/checkout@v4
+    
+    # 2. Configurar Node.js
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    # 3. Instalar dependencias
+    - name: Instalar dependencias
+      run: npm ci
+    
+    # 4. Ejecutar pruebas
+    - name: Ejecutar pruebas
+      run: npm test
+    
+    # 5. Construir el proyecto
+    - name: Construir el proyecto
+      run: npm run build
+    
+    # 6. Subir artefacto de ejemplo
+    - name: Subir artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: demo-build
+        path: |
+          .
+          !node_modules
+          !.git
